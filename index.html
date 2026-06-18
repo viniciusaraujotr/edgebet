@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1B5E20">
+<title>Edge Bet</title>
+<style>
+:root {
+  --green: #1B5E20;
+  --green-mid: #2E7D32;
+  --gold: #F9A825;
+  --surface: #1a2a1a;
+  --card: #1e321e;
+  --border: rgba(249,168,37,0.18);
+  --text: #e8f5e9;
+  --muted: #a5c6a5;
+  --red: #ef5350;
+  --success: #66bb6a;
+  --input-bg: rgba(255,255,255,0.05);
+  --input-border: rgba(165,198,165,0.25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--surface); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; overflow-x: hidden; }
+
+.tela { display: none; min-height: 100vh; padding-bottom: 72px; }
+.tela.ativa { display: block; }
+
+/* HEADER */
+.header { background: var(--green); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+.header-logo { display: flex; align-items: center; gap: 8px; }
+.logo-icon { width: 30px; height: 30px; background: var(--gold); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.logo-text { font-size: 16px; font-weight: 600; color: #fff; }
+.logo-text span { color: var(--gold); }
+.header-back { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 8px; }
+.header-back span { font-size: 15px; font-weight: 500; }
+.header-sacado { background: rgba(249,168,37,0.15); border: 1px solid rgba(249,168,37,0.35); border-radius: 20px; padding: 4px 10px; font-size: 12px; color: var(--gold); }
+
+.body { padding: 16px; }
+
+/* CARDS */
+.fase-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(249,168,37,0.1); border: 1px solid rgba(249,168,37,0.3); border-radius: 20px; padding: 5px 12px; font-size: 12px; color: var(--gold); margin-bottom: 14px; }
+.banca-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.banca-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.banca-valor { font-size: 36px; font-weight: 600; color: #fff; line-height: 1; margin-bottom: 4px; }
+.banca-meta-txt { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.banca-meta-txt strong { color: var(--gold); font-weight: 500; }
+.progress-track { background: rgba(255,255,255,0.08); border-radius: 999px; height: 8px; overflow: hidden; margin-bottom: 6px; }
+.progress-fill { height: 100%; border-radius: 999px; background: var(--gold); transition: width 0.5s; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+.progress-labels .pct { color: var(--gold); font-weight: 600; }
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+.ciclo-info { display: flex; justify-content: space-between; }
+.ci-item { text-align: center; }
+.ci-label { font-size: 11px; color: var(--muted); }
+.ci-val { font-size: 14px; font-weight: 600; margin-top: 2px; }
+
+/* SACADO DESTAQUE */
+.sacado-card { background: rgba(249,168,37,0.06); border: 1px solid rgba(249,168,37,0.2); border-radius: 12px; padding: 13px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.sacado-left .sl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+.sacado-left .sv { font-size: 24px; font-weight: 600; color: var(--gold); }
+.sacado-right { text-align: right; }
+.sacado-right .sr-label { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.sacado-right .sr-val { font-size: 13px; font-weight: 500; color: var(--text); }
+
+.cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.card-mini { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 13px; }
+.cm-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.cm-val { font-size: 22px; font-weight: 600; line-height: 1; }
+.cm-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ALERTAS */
+.alerta { border-radius: 12px; padding: 11px 13px; display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 13px; line-height: 1.4; }
+.alerta.warn  { background: rgba(249,168,37,0.1);  border: 1px solid rgba(249,168,37,0.35);  color: var(--gold); }
+.alerta.danger{ background: rgba(239,83,80,0.1);   border: 1px solid rgba(239,83,80,0.35);   color: var(--red); }
+.alerta.info  { background: rgba(102,187,106,0.08);border: 1px solid rgba(102,187,106,0.25); color: var(--muted); }
+.alerta-icon  { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+/* BOTÕES */
+.btn { width: 100%; border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+.btn-primary   { background: var(--gold); color: var(--green); }
+.btn-primary:active { opacity: 0.85; }
+.btn-secondary { background: transparent; color: var(--muted); border: 1px solid rgba(165,198,165,0.25); }
+.btn-danger    { background: rgba(239,83,80,0.1); color: var(--red); border: 1px solid rgba(239,83,80,0.25); }
+
+/* ENTRADAS */
+.section-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 14px 0 8px; }
+.entrada-row { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 11px 13px; display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.entrada-res { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.entrada-res.g { background: rgba(102,187,106,0.15); color: var(--success); }
+.entrada-res.r { background: rgba(239,83,80,0.15);   color: var(--red); }
+.entrada-res.p { background: rgba(249,168,37,0.1);   color: var(--gold); }
+.entrada-body { flex: 1; min-width: 0; }
+.entrada-evento { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.entrada-detalhe { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.entrada-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.entrada-tag { background: rgba(249,168,37,0.1); border: 1px solid rgba(249,168,37,0.2); border-radius: 20px; padding: 2px 8px; font-size: 10px; color: var(--gold); }
+.entrada-right { text-align: right; flex-shrink: 0; }
+.entrada-odd { font-size: 13px; color: var(--gold); font-weight: 600; }
+.entrada-lucro { font-size: 11px; font-weight: 500; margin-top: 2px; }
+.entrada-lucro.g { color: var(--success); }
+.entrada-lucro.r { color: var(--red); }
+
+/* FORMULÁRIO */
+.form-section { margin-bottom: 16px; }
+.form-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+.sport-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.sport-btn { background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 10px; padding: 12px 6px; cursor: pointer; color: var(--muted); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.sport-btn.sel { border-color: var(--gold); color: var(--gold); background: rgba(249,168,37,0.08); }
+.sport-icon { font-size: 22px; }
+
+/* AUTOCOMPLETE */
+.autocomplete-wrap { position: relative; }
+.autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: #1e321e; border: 1px solid rgba(249,168,37,0.3); border-radius: 0 0 10px 10px; z-index: 50; max-height: 160px; overflow-y: auto; display: none; }
+.autocomplete-list.show { display: block; }
+.autocomplete-item { padding: 10px 14px; font-size: 13px; cursor: pointer; color: var(--text); border-bottom: 1px solid var(--border); }
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover, .autocomplete-item:active { background: rgba(249,168,37,0.08); color: var(--gold); }
+
+.inp { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 10px; padding: 13px 14px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+.inp:focus { border-color: rgba(249,168,37,0.5); }
+.inp::placeholder { color: rgba(165,198,165,0.4); }
+
+/* TAGS INPUT */
+.tags-wrap { background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 10px; padding: 8px 10px; min-height: 50px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; cursor: text; }
+.tags-wrap:focus-within { border-color: rgba(249,168,37,0.5); }
+.tag-pill { background: rgba(249,168,37,0.12); border: 1px solid rgba(249,168,37,0.3); border-radius: 20px; padding: 4px 10px; font-size: 12px; color: var(--gold); display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.tag-pill button { background: none; border: none; color: var(--gold); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; opacity: 0.7; }
+.tag-pill button:hover { opacity: 1; }
+.tag-input { background: none; border: none; outline: none; color: var(--text); font-size: 13px; font-family: inherit; min-width: 100px; flex: 1; padding: 4px 2px; }
+.tag-input::placeholder { color: rgba(165,198,165,0.4); }
+.tags-sugestoes { background: #1e321e; border: 1px solid rgba(249,168,37,0.3); border-top: none; border-radius: 0 0 10px 10px; display: none; max-height: 140px; overflow-y: auto; }
+.tags-sugestoes.show { display: block; }
+.tag-sug-item { padding: 9px 14px; font-size: 13px; cursor: pointer; color: var(--text); border-bottom: 1px solid var(--border); }
+.tag-sug-item:last-child { border-bottom: none; }
+.tag-sug-item:active { background: rgba(249,168,37,0.08); color: var(--gold); }
+.hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* ODD */
+.odd-wrap { display: flex; }
+.odd-inp { flex: 1; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 10px 0 0 10px; padding: 13px 14px; color: var(--text); font-size: 18px; font-weight: 600; font-family: inherit; outline: none; }
+.odd-inp:focus { border-color: rgba(249,168,37,0.5); }
+.odd-badge { background: var(--input-bg); border: 1px solid var(--input-border); border-left: none; border-radius: 0 10px 10px 0; padding: 13px 12px; font-size: 12px; color: var(--muted); min-width: 90px; text-align: center; display: flex; align-items: center; justify-content: center; }
+.odd-badge.valid   { color: var(--success); border-color: rgba(102,187,106,0.4); background: rgba(102,187,106,0.06); }
+.odd-badge.invalid { color: var(--red);     border-color: rgba(239,83,80,0.4);   background: rgba(239,83,80,0.06); }
+.odd-badge.warn    { color: #ffa726;        border-color: rgba(255,167,38,0.4);  background: rgba(255,167,38,0.06); }
+
+/* VALOR */
+.valor-wrap { display: flex; align-items: center; gap: 8px; }
+.valor-pre { font-size: 16px; color: var(--muted); font-weight: 500; }
+.valor-inp { flex: 1; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 10px; padding: 13px 14px; color: var(--text); font-size: 20px; font-weight: 600; font-family: inherit; outline: none; }
+.valor-inp:focus { border-color: rgba(249,168,37,0.5); }
+
+/* TOGGLE */
+.toggle-row { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 14px; display: flex; align-items: center; justify-content: space-between; }
+.toggle-info .tl { font-size: 14px; }
+.toggle-info .ts { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.toggle { width: 44px; height: 26px; background: rgba(255,255,255,0.1); border-radius: 999px; position: relative; cursor: pointer; border: none; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: var(--red); }
+.toggle::after { content: ''; position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; }
+.toggle.on::after { left: 21px; }
+
+/* MODAL */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+.overlay.show { display: flex; }
+.modal { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px 20px; width: 100%; max-width: 340px; text-align: center; }
+.modal-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.res-btn { border-radius: 12px; padding: 16px 8px; cursor: pointer; border: none; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+.res-btn.gb { background: rgba(102,187,106,0.15); color: var(--success); border: 1px solid rgba(102,187,106,0.35); }
+.res-btn.rb { background: rgba(239,83,80,0.15);   color: var(--red);     border: 1px solid rgba(239,83,80,0.35); }
+.res-btn .res-ico { font-size: 28px; }
+.modal-cancel { margin-top: 12px; background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; padding: 8px; width: 100%; }
+
+/* ESCADA */
+.degrau { border-radius: 12px; padding: 13px; margin-bottom: 7px; border: 1px solid transparent; cursor: pointer; }
+.degrau.concluido { background: rgba(102,187,106,0.06); border-color: rgba(102,187,106,0.2); }
+.degrau.atual     { background: rgba(249,168,37,0.1);   border-color: rgba(249,168,37,0.45); }
+.degrau.futuro    { background: var(--card); border-color: var(--border); opacity: 0.55; }
+.degrau-top { display: flex; align-items: center; gap: 10px; }
+.degrau-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.degrau-icon.c { background: rgba(102,187,106,0.15); }
+.degrau-icon.a { background: rgba(249,168,37,0.15); }
+.degrau-icon.f { background: rgba(165,198,165,0.07); }
+.degrau-nome { font-size: 13px; font-weight: 600; flex: 1; }
+.degrau-nome.c { color: var(--success); }
+.degrau-nome.a { color: var(--gold); }
+.degrau-nome.f { color: var(--muted); }
+.degrau-lucro { font-size: 14px; font-weight: 600; }
+.degrau-lucro.c { color: var(--success); }
+.degrau-lucro.a { color: var(--gold); }
+.degrau-lucro.f { color: var(--muted); }
+.degrau-sub { font-size: 11px; color: var(--muted); margin-top: 2px; padding-left: 44px; }
+.degrau-det { overflow: hidden; max-height: 0; transition: max-height 0.3s; }
+.degrau-det.open { max-height: 130px; }
+.det-inner { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; padding: 10px 0 2px; border-top: 1px solid var(--border); margin-top: 10px; text-align: center; }
+.det-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+.det-val { font-size: 13px; font-weight: 500; }
+.connector { height: 10px; display: flex; justify-content: center; }
+.connector-line { width: 2px; background: var(--border); border-radius: 1px; }
+
+/* HISTÓRICO */
+.filtros { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; }
+.filtros::-webkit-scrollbar { display: none; }
+.filtro { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 12px; color: var(--muted); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.filtro.ativo { background: rgba(249,168,37,0.12); border-color: rgba(249,168,37,0.4); color: var(--gold); }
+.ciclo-sep { display: flex; align-items: center; gap: 8px; margin: 14px 0 8px; }
+.ciclo-sep-line { flex: 1; height: 1px; background: var(--border); }
+.ciclo-sep-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 13px; }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.stat-val { font-size: 20px; font-weight: 600; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-txt { font-size: 14px; }
+
+/* RELATÓRIO TAGS */
+.rel-tag-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+.rel-tag-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.rel-tag-nome { font-size: 14px; font-weight: 600; color: var(--gold); }
+.rel-tag-total { font-size: 12px; color: var(--muted); }
+.rel-tag-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; text-align: center; }
+.rel-tag-stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+.rel-tag-stat-val { font-size: 14px; font-weight: 600; }
+.rel-tag-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 999px; margin-top: 10px; overflow: hidden; }
+.rel-tag-bar-fill { height: 100%; border-radius: 999px; background: var(--gold); }
+
+/* REGRAS */
+.regra-grupo { margin-bottom: 16px; }
+.regra-grupo-titulo { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.regra-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 6px; display: flex; gap: 10px; }
+.regra-ico { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.regra-conteudo .rt { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.regra-conteudo .rd { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.regra-item.ok    { border-color: rgba(102,187,106,0.2); }
+.regra-item.warn  { border-color: rgba(249,168,37,0.25); }
+.regra-item.block { border-color: rgba(239,83,80,0.2); }
+.regra-item.tip   { border-color: rgba(100,181,246,0.2); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 11px 18px; font-size: 13px; display: none; align-items: center; gap: 8px; z-index: 200; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.4); max-width: 90vw; white-space: normal; text-align: center; }
+.toast.show { display: flex; }
+.toast.success { border-color: rgba(102,187,106,0.5); color: var(--success); }
+.toast.error   { border-color: rgba(239,83,80,0.5);   color: var(--red); }
+.toast.info    { border-color: rgba(249,168,37,0.4);   color: var(--gold); }
+
+/* NAV */
+.nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--green); border-top: 1px solid rgba(249,168,37,0.2); display: flex; justify-content: space-around; padding: 8px 0 14px; z-index: 50; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: rgba(255,255,255,0.45); background: none; border: none; cursor: pointer; padding: 4px 8px; }
+.nav-item.active { color: var(--gold); }
+.nav-icon { font-size: 20px; line-height: 1; }
+
+.sacar-card { background: rgba(249,168,37,0.08); border: 1px solid rgba(249,168,37,0.4); border-radius: 14px; padding: 16px; text-align: center; margin-bottom: 12px; }
+.sacar-title { font-size: 18px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+.sacar-sub { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- DASHBOARD -->
+<div id="tela-dashboard" class="tela ativa">
+  <div class="header">
+    <div class="header-logo">
+      <div class="logo-icon">🏆</div>
+      <span class="logo-text">Edge <span>Bet</span></span>
+    </div>
+    <div id="hdr-sacado" class="header-sacado">R$ 0,00 sacado</div>
+  </div>
+  <div class="body">
+    <div id="dash-fase-tag" class="fase-tag">Carregando...</div>
+
+    <div class="banca-card">
+      <div class="banca-label">Banca atual</div>
+      <div id="dash-banca" class="banca-valor">R$ 0,00</div>
+      <div class="banca-meta-txt">Meta: <strong id="dash-meta-val">R$ 0,00</strong> — Lucro estimado: <strong id="dash-lucro-est" style="color:var(--muted)">R$ 0,00</strong></div>
+      <div class="progress-track"><div id="dash-progress" class="progress-fill" style="width:0%"></div></div>
+      <div class="progress-labels">
+        <span id="dash-prog-ini">R$ 0</span>
+        <span class="pct" id="dash-prog-pct">0%</span>
+        <span id="dash-prog-meta">R$ 0</span>
+      </div>
+      <div class="divider"></div>
+      <div class="ciclo-info">
+        <div class="ci-item"><div class="ci-label">Ciclo</div><div class="ci-val" id="dash-ciclo-num" style="color:var(--gold)">—</div></div>
+        <div class="ci-item"><div class="ci-label">Greens</div><div class="ci-val" id="dash-greens" style="color:var(--success)">0</div></div>
+        <div class="ci-item"><div class="ci-label">Reds</div><div class="ci-val" id="dash-reds" style="color:var(--red)">0</div></div>
+        <div class="ci-item"><div class="ci-label">Entradas</div><div class="ci-val" id="dash-total-ents">0</div></div>
+      </div>
+    </div>
+
+    <div class="sacado-card">
+      <div class="sacado-left">
+        <div class="sl">💰 Total sacado</div>
+        <div class="sv" id="dash-sacado-val">R$ 0,00</div>
+      </div>
+      <div class="sacado-right">
+        <div class="sr-label">Ciclos concluídos</div>
+        <div class="sr-val" id="dash-ciclos-concl">0 ciclos</div>
+      </div>
+    </div>
+
+    <div id="dash-alerta-meta" class="sacar-card" style="display:none">
+      <div class="sacar-title">🎉 Meta atingida!</div>
+      <div class="sacar-sub" id="dash-alerta-meta-txt"></div>
+      <button class="btn btn-primary" style="margin-top:12px;margin-bottom:0" onclick="abrirSacar()">💰 Sacar e avançar fase</button>
+    </div>
+    <div id="dash-alerta-dobrar" class="alerta danger" style="display:none">
+      <span class="alerta-icon">⚠️</span>
+      <div><strong>Atenção!</strong> Red no ciclo anterior. O método proíbe dobrar aposta — mantenha o valor da banca.</div>
+    </div>
+
+    <button id="dash-btn-registrar" class="btn btn-primary" onclick="irParaRegistro()">➕ Registrar entrada</button>
+    <button class="btn btn-secondary" onclick="irTela('tela-escada')">📊 Ver escada progressiva</button>
+
+    <div id="dash-hoje-lista-wrap">
+      <div class="section-title">Entradas recentes</div>
+      <div id="dash-hoje-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTRO -->
+<div id="tela-registro" class="tela">
+  <div class="header">
+    <button class="header-back" onclick="irTela('tela-dashboard')">‹ <span>Dashboard</span></button>
+  </div>
+  <div class="body">
+    <div class="banca-card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div class="banca-label">Banca</div><div id="reg-banca-val" style="font-size:22px;font-weight:600;color:var(--gold)">R$ 0,00</div></div>
+        <div style="text-align:center"><div class="banca-label">Meta</div><div id="reg-meta-val" style="font-size:16px;font-weight:500">R$ 0,00</div></div>
+        <div style="text-align:right"><div class="banca-label">Fase</div><div id="reg-fase-val" style="font-size:13px;font-weight:500;color:var(--gold)">—</div></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-label">Esporte</div>
+      <div class="sport-grid">
+        <button class="sport-btn sel" id="sp-futebol" onclick="selSport('futebol')"><span class="sport-icon">⚽</span>Futebol</button>
+        <button class="sport-btn" id="sp-tenis" onclick="selSport('tenis')"><span class="sport-icon">🎾</span>Tênis</button>
+        <button class="sport-btn" id="sp-outros" onclick="selSport('outros')"><span class="sport-icon">🏅</span>Outros</button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-label">Evento</div>
+      <div class="autocomplete-wrap">
+        <input class="inp" type="text" id="reg-evento" placeholder="Ex: Roland Garros, Copa do Brasil..." oninput="acEvento(this.value)" onblur="fecharAc('ac-evento',300)" autocomplete="off">
+        <div class="autocomplete-list" id="ac-evento"></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-label">Mercado (tags)</div>
+      <div class="tags-wrap" id="tags-wrap" onclick="document.getElementById('tag-input').focus()">
+        <input class="tag-input" id="tag-input" placeholder="Digite e pressione vírgula ou Enter..." oninput="tagSugestao(this.value)" onkeydown="tagKeydown(event)" onblur="fecharAc('tags-sugestoes-list',300)">
+      </div>
+      <div class="tags-sugestoes" id="tags-sugestoes-list"></div>
+      <div class="hint">💡 Ex: Djokovic · Nadal · Over 2.5 — cada item vira uma tag</div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-label">Odd</div>
+      <div class="odd-wrap">
+        <input class="odd-inp" type="number" id="reg-odd" placeholder="1.38" step="0.01" min="1" max="3" oninput="validarOdd()">
+        <div class="odd-badge" id="reg-odd-badge">1.30 – 1.50</div>
+      </div>
+      <div class="hint" id="reg-odd-hint">Zona dourada do método: 1.30 a 1.50</div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-label">Valor apostado</div>
+      <div class="valor-wrap">
+        <span class="valor-pre">R$</span>
+        <input class="valor-inp" type="number" id="reg-valor" step="0.01" min="0.01" oninput="checarDobrar()">
+      </div>
+      <div class="hint" id="reg-valor-hint">💡 Sugerido: banca atual completa</div>
+    </div>
+
+    <div class="form-section">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">Ao vivo?</div>
+          <div class="ts">Proibido pelo método ❌</div>
+        </div>
+        <button class="toggle" id="reg-aovivo" onclick="toggleAoVivo()" aria-label="Ao vivo"></button>
+      </div>
+    </div>
+
+    <div id="reg-alertas"></div>
+
+    <button class="btn btn-primary" id="reg-btn-confirmar" onclick="abrirModalResultado()" disabled style="opacity:0.4;cursor:not-allowed">
+      ✅ Confirmar entrada
+    </button>
+  </div>
+</div>
+
+<!-- ESCADA -->
+<div id="tela-escada" class="tela">
+  <div class="header">
+    <button class="header-back" onclick="irTela('tela-dashboard')">‹ <span>Início</span></button>
+  </div>
+  <div class="body">
+    <div class="banca-card" style="text-align:center;padding:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">
+        <div><div class="banca-label">Fase</div><div style="font-size:13px;font-weight:600;color:var(--gold)" id="esc-fase-nome">—</div></div>
+        <div><div class="banca-label">Concluídas</div><div style="font-size:13px;font-weight:600;color:var(--success)" id="esc-concluidas">0/11</div></div>
+        <div><div class="banca-label">Total sacado</div><div style="font-size:13px;font-weight:600;color:var(--gold)" id="esc-sacado">R$ 0</div></div>
+      </div>
+    </div>
+    <div id="escada-lista"></div>
+    <div style="background:rgba(249,168,37,0.08);border:1px solid rgba(249,168,37,0.3);border-radius:14px;padding:16px;text-align:center;margin-top:4px">
+      <div class="banca-label">Lucro total ao completar todas as fases</div>
+      <div style="font-size:28px;font-weight:600;color:var(--gold);margin:4px 0">R$ 1.130,00</div>
+      <div style="font-size:12px;color:var(--muted)">partindo de R$ 10,00 iniciais</div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div id="tela-historico" class="tela">
+  <div class="header">
+    <button class="header-back" onclick="irTela('tela-dashboard')">‹ <span>Início</span></button>
+  </div>
+  <div class="body">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Taxa acerto</div><div class="stat-val" id="hist-taxa" style="color:var(--success)">—</div><div class="stat-sub" id="hist-taxa-sub">sem entradas</div></div>
+      <div class="stat-card"><div class="stat-label">Total sacado</div><div class="stat-val" id="hist-sacado" style="color:var(--gold)">R$ 0</div><div class="stat-sub" id="hist-ciclos-sub">0 ciclos</div></div>
+      <div class="stat-card"><div class="stat-label">Odd média</div><div class="stat-val" id="hist-odd-media">—</div><div class="stat-sub">todas entradas</div></div>
+      <div class="stat-card"><div class="stat-label">Total entradas</div><div class="stat-val" id="hist-total">0</div><div class="stat-sub" id="hist-dias-sub">0 dias ativos</div></div>
+    </div>
+    <div class="filtros" id="hist-filtros">
+      <div class="filtro ativo" onclick="filtrarHist(this,'todos')">Todos</div>
+      <div class="filtro" onclick="filtrarHist(this,'green')">✅ Greens</div>
+      <div class="filtro" onclick="filtrarHist(this,'red')">❌ Reds</div>
+      <div class="filtro" onclick="filtrarHist(this,'futebol')">⚽ Futebol</div>
+      <div class="filtro" onclick="filtrarHist(this,'tenis')">🎾 Tênis</div>
+      <div class="filtro" onclick="filtrarHist(this,'outros')">🏅 Outros</div>
+    </div>
+    <div id="hist-lista"></div>
+    <button class="btn btn-secondary" style="margin-top:8px" onclick="irTela('tela-relatorio')">📊 Ver relatório por tag</button>
+    <button class="btn btn-danger" style="margin-top:4px" onclick="confirmarReset()">🗑️ Zerar todos os dados</button>
+  </div>
+</div>
+
+<!-- RELATÓRIO POR TAG -->
+<div id="tela-relatorio" class="tela">
+  <div class="header">
+    <button class="header-back" onclick="irTela('tela-historico')">‹ <span>Histórico</span></button>
+  </div>
+  <div class="body">
+    <div class="alerta info" style="margin-bottom:16px">
+      <span class="alerta-icon">💡</span>
+      <div>Desempenho por tag — descubra quais mercados e times têm melhor taxa de acerto.</div>
+    </div>
+    <div id="rel-lista"></div>
+  </div>
+</div>
+
+<!-- REGRAS -->
+<div id="tela-regras" class="tela">
+  <div class="header">
+    <button class="header-back" onclick="irTela('tela-dashboard')">‹ <span>Início</span></button>
+  </div>
+  <div class="body">
+    <div class="alerta info" style="margin-bottom:16px">
+      <span class="alerta-icon">📋</span>
+      <div>Regras oficiais do Método Escada Progressiva. Leia antes de cada sessão.</div>
+    </div>
+
+    <div class="regra-grupo">
+      <div class="regra-grupo-titulo">✅ Obrigatório</div>
+      <div class="regra-item ok"><span class="regra-ico">✅</span><div class="regra-conteudo"><div class="rt">Banca inicial</div><div class="rd">Validação 1 e 2: R$10. Escada: R$20/R$30/R$40. Cruzeiro: R$50 subindo R$10 a cada 3 ciclos. Teto: R$100.</div></div></div>
+      <div class="regra-item ok"><span class="regra-ico">✅</span><div class="regra-conteudo"><div class="rt">Meta por fase</div><div class="rd">Validação: 4x | Escada 1: 3.5x | Escada 2 e 3: 3x | Cruzeiro e Elite: 3x</div></div></div>
+      <div class="regra-item ok"><span class="regra-ico">✅</span><div class="regra-conteudo"><div class="rt">Lucro sacado</div><div class="rd">100% do lucro sai da banca após cada ciclo. Esse dinheiro é SEU — não volta ao jogo.</div></div></div>
+      <div class="regra-item ok"><span class="regra-ico">✅</span><div class="regra-conteudo"><div class="rt">Subida de fase</div><div class="rd">Só sobe após concluir o ciclo atual. Cruzeiro: +R$10 a cada 3 ciclos concluídos.</div></div></div>
+      <div class="regra-item ok"><span class="regra-ico">✅</span><div class="regra-conteudo"><div class="rt">Teto da banca</div><div class="rd">R$100 de banca inicial. Ao atingir, mantém R$100 para sempre — lucro fixo de R$200/ciclo.</div></div></div>
+    </div>
+
+    <div class="regra-grupo">
+      <div class="regra-grupo-titulo">⚠️ Atenção</div>
+      <div class="regra-item warn"><span class="regra-ico">⚠️</span><div class="regra-conteudo"><div class="rt">Red no ciclo</div><div class="rd">NÃO volta de fase. Mantém a banca atual e continua o ciclo. A punição natural já existe: mais greens para recuperar.</div></div></div>
+      <div class="regra-item warn"><span class="regra-ico">⚠️</span><div class="regra-conteudo"><div class="rt">Odd alvo</div><div class="rd">1.35 — zona dourada. Abaixo de 1.30: não compensa. Acima de 1.50: risco aumenta. Nunca forçar odd alta.</div></div></div>
+    </div>
+
+    <div class="regra-grupo">
+      <div class="regra-grupo-titulo">❌ Proibido</div>
+      <div class="regra-item block"><span class="regra-ico">❌</span><div class="regra-conteudo"><div class="rt">NUNCA ao vivo</div><div class="rd">PROIBIDO ABSOLUTO. Sem exceção. Sem negociação.</div></div></div>
+      <div class="regra-item block"><span class="regra-ico">❌</span><div class="regra-conteudo"><div class="rt">NUNCA dobrar aposta</div><div class="rd">Red não justifica dobrar. O método não muda por emoção.</div></div></div>
+      <div class="regra-item block"><span class="regra-ico">❌</span><div class="regra-conteudo"><div class="rt">NUNCA misturar ciclos</div><div class="rd">Lucro sacado não volta para a banca. Ciclos são separados e independentes.</div></div></div>
+    </div>
+
+    <div class="regra-grupo">
+      <div class="regra-grupo-titulo">💡 Mentalidade</div>
+      <div class="regra-item tip"><span class="regra-ico">💡</span><div class="regra-conteudo"><div class="rt">Mentalidade correta</div><div class="rd">Você não está tentando ficar rico hoje. Está construindo um sistema. Cada ciclo concluído é uma vitória real.</div></div></div>
+      <div class="regra-item tip"><span class="regra-ico">💡</span><div class="regra-conteudo"><div class="rt">Motivação</div><div class="rd">Anote cada lucro sacado. Ver o dinheiro acumulando fora da banca é mais motivador que qualquer outro número.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="nav-bar">
+  <button class="nav-item active" id="nav-dashboard" onclick="irTela('tela-dashboard')"><span class="nav-icon">🏠</span>Início</button>
+  <button class="nav-item" id="nav-registro" onclick="irParaRegistro()"><span class="nav-icon">➕</span>Entrada</button>
+  <button class="nav-item" id="nav-escada" onclick="irTela('tela-escada')"><span class="nav-icon">📊</span>Escada</button>
+  <button class="nav-item" id="nav-historico" onclick="irTela('tela-historico')"><span class="nav-icon">📋</span>Histórico</button>
+  <button class="nav-item" id="nav-regras" onclick="irTela('tela-regras')"><span class="nav-icon">📌</span>Regras</button>
+</nav>
+
+<!-- MODAL RESULTADO -->
+<div class="overlay" id="modal-resultado">
+  <div class="modal">
+    <div class="modal-title" id="mod-evento">—</div>
+    <div class="modal-sub" id="mod-detalhe">—</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:16px">Qual foi o resultado?</div>
+    <div class="modal-btns">
+      <button class="res-btn gb" onclick="marcarResultado('green')"><span class="res-ico">✅</span>Green</button>
+      <button class="res-btn rb" onclick="marcarResultado('red')"><span class="res-ico">❌</span>Red</button>
+    </div>
+    <button class="modal-cancel" onclick="fecharModal('modal-resultado')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL SACAR -->
+<div class="overlay" id="modal-sacar">
+  <div class="modal">
+    <div style="font-size:32px;margin-bottom:8px">🎉</div>
+    <div class="modal-title" id="mod-sacar-titulo">Meta atingida!</div>
+    <div class="modal-sub" id="mod-sacar-sub" style="margin-bottom:20px"></div>
+    <button class="btn btn-primary" style="margin-bottom:0" onclick="confirmarSaque()">💰 Confirmar saque</button>
+    <button class="modal-cancel" onclick="fecharModal('modal-sacar')">Cancelar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// FASES DO MÉTODO
+// ══════════════════════════════════════════
+const FASES = [
+  { id:'val1',  nome:'🔍 Validação 1', banca:10,  mult:'4x',   meta:40,  lucro:30  },
+  { id:'val2',  nome:'🔍 Validação 2', banca:10,  mult:'4x',   meta:40,  lucro:30  },
+  { id:'esc1',  nome:'📈 Escada 1',    banca:20,  mult:'3.5x', meta:70,  lucro:50  },
+  { id:'esc2',  nome:'📈 Escada 2',    banca:30,  mult:'3x',   meta:90,  lucro:60  },
+  { id:'esc3',  nome:'📈 Escada 3',    banca:40,  mult:'3x',   meta:120, lucro:80  },
+  { id:'crza',  nome:'🚀 Cruzeiro A',  banca:50,  mult:'3x',   meta:150, lucro:100 },
+  { id:'crzb',  nome:'🚀 Cruzeiro B',  banca:60,  mult:'3x',   meta:180, lucro:120 },
+  { id:'crzc',  nome:'🚀 Cruzeiro C',  banca:70,  mult:'3x',   meta:210, lucro:140 },
+  { id:'crzd',  nome:'🚀 Cruzeiro D',  banca:80,  mult:'3x',   meta:240, lucro:160 },
+  { id:'crze',  nome:'🚀 Cruzeiro E',  banca:90,  mult:'3x',   meta:270, lucro:180 },
+  { id:'elite', nome:'🏆 Elite',        banca:100, mult:'3x',   meta:300, lucro:200 },
+];
+
+// ══════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════
+function estadoPadrao() {
+  return { faseIdx:0, cicloNum:1, banca:FASES[0].banca, totalSacado:0, entradas:[], degrausExpandidos:{} };
+}
+function carregarEstado() {
+  try { const s=localStorage.getItem('edgebet_v2'); return s?JSON.parse(s):estadoPadrao(); } catch(e){ return estadoPadrao(); }
+}
+function salvarEstado() { localStorage.setItem('edgebet_v2',JSON.stringify(estado)); }
+let estado = carregarEstado();
+
+// ══════════════════════════════════════════
+// AUTOCOMPLETE — histórico de eventos e tags
+// ══════════════════════════════════════════
+function getEventosUsados() {
+  return [...new Set(estado.entradas.map(e=>e.evento).filter(Boolean))];
+}
+function getTagsUsadas() {
+  const todas = estado.entradas.flatMap(e=>e.tags||[]);
+  return [...new Set(todas)];
+}
+
+function acEvento(val) {
+  const lista = document.getElementById('ac-evento');
+  if(!val||val.length<2){ lista.classList.remove('show'); lista.innerHTML=''; return; }
+  const sugs = getEventosUsados().filter(e=>e.toLowerCase().includes(val.toLowerCase())).slice(0,5);
+  if(!sugs.length){ lista.classList.remove('show'); return; }
+  lista.innerHTML = sugs.map(s=>`<div class="autocomplete-item" onmousedown="selecionarEvento('${s}')">${s}</div>`).join('');
+  lista.classList.add('show');
+}
+function selecionarEvento(val) {
+  document.getElementById('reg-evento').value=val;
+  document.getElementById('ac-evento').classList.remove('show');
+  checarReg();
+}
+
+// ══════════════════════════════════════════
+// TAGS
+// ══════════════════════════════════════════
+let tagsAtuais = [];
+
+function tagKeydown(e) {
+  const inp = document.getElementById('tag-input');
+  if(e.key===',' || e.key==='Enter') {
+    e.preventDefault();
+    const val = inp.value.trim().replace(/,$/,'');
+    if(val) adicionarTag(val);
+  } else if(e.key==='Backspace' && inp.value==='' && tagsAtuais.length>0) {
+    removerTag(tagsAtuais.length-1);
+  }
+}
+function adicionarTag(val) {
+  if(!val||tagsAtuais.includes(val)) return;
+  tagsAtuais.push(val);
+  document.getElementById('tag-input').value='';
+  document.getElementById('tags-sugestoes-list').classList.remove('show');
+  renderTagsWrap();
+  checarReg();
+}
+function removerTag(idx) {
+  tagsAtuais.splice(idx,1);
+  renderTagsWrap();
+  checarReg();
+}
+function renderTagsWrap() {
+  const wrap = document.getElementById('tags-wrap');
+  const inp  = document.getElementById('tag-input');
+  wrap.innerHTML='';
+  tagsAtuais.forEach((t,i)=>{
+    const pill = document.createElement('span');
+    pill.className='tag-pill';
+    pill.innerHTML=`${t}<button onclick="removerTag(${i})" type="button">×</button>`;
+    wrap.appendChild(pill);
+  });
+  wrap.appendChild(inp);
+}
+function tagSugestao(val) {
+  const lista = document.getElementById('tags-sugestoes-list');
+  if(!val||val.length<1){ lista.classList.remove('show'); return; }
+  const sugs = getTagsUsadas().filter(t=>t.toLowerCase().includes(val.toLowerCase())&&!tagsAtuais.includes(t)).slice(0,5);
+  if(!sugs.length){ lista.classList.remove('show'); return; }
+  lista.innerHTML = sugs.map(s=>`<div class="tag-sug-item" onmousedown="adicionarTag('${s}')">${s}</div>`).join('');
+  lista.classList.add('show');
+}
+function fecharAc(id, delay) {
+  setTimeout(()=>{ const el=document.getElementById(id); if(el) el.classList.remove('show'); }, delay);
+}
+
+// ══════════════════════════════════════════
+// NAVEGAÇÃO
+// ══════════════════════════════════════════
+const TELAS = ['tela-dashboard','tela-registro','tela-escada','tela-historico','tela-relatorio','tela-regras'];
+const NAVMAP = { 'tela-dashboard':'nav-dashboard','tela-registro':'nav-registro','tela-escada':'nav-escada','tela-historico':'nav-historico','tela-relatorio':'nav-historico','tela-regras':'nav-regras' };
+
+function irTela(id) {
+  TELAS.forEach(t=>document.getElementById(t).classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(NAVMAP[id]) document.getElementById(NAVMAP[id]).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='tela-dashboard') renderDashboard();
+  if(id==='tela-escada')    renderEscada();
+  if(id==='tela-historico') renderHistorico();
+  if(id==='tela-relatorio') renderRelatorio();
+}
+
+function irParaRegistro() {
+  const fase = FASES[estado.faseIdx];
+  if(estado.banca >= fase.meta){ showToast('Meta atingida! Saque primeiro. 🎉','info'); return; }
+  prepararRegistro();
+  irTela('tela-registro');
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function fmtR(v){ return 'R$ '+v.toFixed(2).replace('.',','); }
+function hoje(){ return new Date().toISOString().slice(0,10); }
+function fmtData(iso){ return iso.slice(8,10)+'/'+iso.slice(5,7); }
+function entradasCicloAtual(){ return estado.entradas.filter(e=>e.ciclo===estado.cicloNum); }
+function ultimaEntrada(){ return estado.entradas.length>0?estado.entradas[estado.entradas.length-1]:null; }
+
+function showToast(msg,tipo){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(tipo||'info');
+  clearTimeout(window._tt);
+  window._tt=setTimeout(()=>{ t.className='toast'; },3500);
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+function renderDashboard() {
+  const fase = FASES[estado.faseIdx];
+  const cicloEnts = entradasCicloAtual();
+  const greens = cicloEnts.filter(e=>e.resultado==='green').length;
+  const reds   = cicloEnts.filter(e=>e.resultado==='red').length;
+  const metaAtingida = estado.banca >= fase.meta;
+  const ult = ultimaEntrada();
+  const alertaDobrar = ult && ult.resultado==='red' && ult.ciclo===estado.cicloNum;
+
+  document.getElementById('hdr-sacado').textContent = fmtR(estado.totalSacado)+' sacado';
+  document.getElementById('dash-fase-tag').textContent = fase.nome+' — Ciclo '+estado.cicloNum;
+  document.getElementById('dash-banca').textContent = fmtR(estado.banca);
+  document.getElementById('dash-meta-val').textContent = fmtR(fase.meta);
+  document.getElementById('dash-lucro-est').textContent = fmtR(fase.lucro);
+  document.getElementById('dash-sacado-val').textContent = fmtR(estado.totalSacado);
+  document.getElementById('dash-ciclos-concl').textContent = (estado.cicloNum-1)+' ciclos';
+
+  const pct = Math.max(0,Math.min(100,Math.round(((estado.banca-fase.banca)/(fase.meta-fase.banca))*100)));
+  document.getElementById('dash-progress').style.width=pct+'%';
+  document.getElementById('dash-prog-pct').textContent=pct+'%';
+  document.getElementById('dash-prog-ini').textContent=fmtR(fase.banca);
+  document.getElementById('dash-prog-meta').textContent=fmtR(fase.meta);
+
+  document.getElementById('dash-ciclo-num').textContent='Ciclo '+estado.cicloNum;
+  document.getElementById('dash-greens').textContent=greens;
+  document.getElementById('dash-reds').textContent=reds;
+  document.getElementById('dash-total-ents').textContent=cicloEnts.length;
+
+  document.getElementById('dash-alerta-meta').style.display = metaAtingida?'block':'none';
+  if(metaAtingida) document.getElementById('dash-alerta-meta-txt').textContent='Lucro de '+fmtR(fase.lucro)+' garantido! Saque agora.';
+  document.getElementById('dash-alerta-dobrar').style.display = (!metaAtingida&&alertaDobrar)?'flex':'none';
+
+  const btnReg = document.getElementById('dash-btn-registrar');
+  if(metaAtingida){ btnReg.style.opacity='0.4'; btnReg.style.cursor='not-allowed'; }
+  else { btnReg.style.opacity='1'; btnReg.style.cursor='pointer'; }
+
+  const recentes = [...estado.entradas].reverse().slice(0,5);
+  const lista = document.getElementById('dash-hoje-lista');
+  lista.innerHTML = recentes.length===0
+    ? '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-txt">Nenhuma entrada ainda. Comece registrando!</div></div>'
+    : recentes.map(e=>entradaRowHtml(e)).join('');
+}
+
+function entradaRowHtml(e) {
+  const g=e.resultado==='green', r=e.resultado==='red';
+  const cls=g?'g':r?'r':'p';
+  const ico=g?'✅':r?'❌':'⏳';
+  const lucroStr=g?'+'+fmtR(e.lucro):r?'-'+fmtR(Math.abs(e.lucro)):'—';
+  const esIco=e.esporte==='futebol'?'⚽':e.esporte==='tenis'?'🎾':'🏅';
+  const tagsHtml=(e.tags&&e.tags.length)?`<div class="entrada-tags">${e.tags.map(t=>`<span class="entrada-tag">${t}</span>`).join('')}</div>`:'';
+  return `<div class="entrada-row">
+    <div class="entrada-res ${cls}">${ico}</div>
+    <div class="entrada-body">
+      <div class="entrada-evento">${esIco} ${e.evento||'—'}</div>
+      ${tagsHtml}
+    </div>
+    <div class="entrada-right">
+      <div class="entrada-odd">${parseFloat(e.odd).toFixed(2)}</div>
+      <div class="entrada-lucro ${cls}">${lucroStr}</div>
+      <div style="font-size:10px;color:var(--muted)">${fmtData(e.data)}</div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// REGISTRO
+// ══════════════════════════════════════════
+let regSport='futebol', regAoVivo=false, regOddValida=false, entradaTemp=null;
+let bancaAnterior=0;
+
+function prepararRegistro() {
+  const fase=FASES[estado.faseIdx];
+  document.getElementById('reg-banca-val').textContent=fmtR(estado.banca);
+  document.getElementById('reg-meta-val').textContent=fmtR(fase.meta);
+  document.getElementById('reg-fase-val').textContent=fase.nome;
+  document.getElementById('reg-valor').value=estado.banca.toFixed(2);
+  document.getElementById('reg-evento').value='';
+  document.getElementById('reg-odd').value='';
+  document.getElementById('reg-odd-badge').className='odd-badge';
+  document.getElementById('reg-odd-badge').textContent='1.30 – 1.50';
+  document.getElementById('reg-odd-hint').style.color='var(--muted)';
+  regSport='futebol'; regAoVivo=false; regOddValida=false; tagsAtuais=[];
+  ['futebol','tenis','outros'].forEach(s=>{ document.getElementById('sp-'+s).className='sport-btn'+(s==='futebol'?' sel':''); });
+  document.getElementById('reg-aovivo').className='toggle';
+  document.getElementById('reg-alertas').innerHTML='';
+  document.getElementById('ac-evento').classList.remove('show');
+  renderTagsWrap();
+  const ult=ultimaEntrada();
+  bancaAnterior = (ult&&ult.resultado==='red'&&ult.ciclo===estado.cicloNum) ? ult.valor : 0;
+  const btn=document.getElementById('reg-btn-confirmar');
+  btn.disabled=true; btn.style.opacity='0.4'; btn.style.cursor='not-allowed';
+}
+
+function selSport(s) {
+  regSport=s;
+  ['futebol','tenis','outros'].forEach(x=>{ document.getElementById('sp-'+x).className='sport-btn'+(x===s?' sel':''); });
+}
+
+function toggleAoVivo() {
+  regAoVivo=!regAoVivo;
+  document.getElementById('reg-aovivo').className='toggle'+(regAoVivo?' on':'');
+  checarReg();
+}
+
+function validarOdd() {
+  const v=parseFloat(document.getElementById('reg-odd').value);
+  const badge=document.getElementById('reg-odd-badge');
+  const hint=document.getElementById('reg-odd-hint');
+  if(isNaN(v)||document.getElementById('reg-odd').value===''){
+    badge.className='odd-badge'; badge.textContent='1.30 – 1.50';
+    hint.textContent='Zona dourada do método: 1.30 a 1.50'; hint.style.color='var(--muted)';
+    regOddValida=false;
+  } else if(v>=1.30&&v<=1.50){
+    badge.className='odd-badge valid'; badge.textContent='✓ Válida';
+    hint.textContent='Odd dentro da zona do método ✓'; hint.style.color='var(--success)';
+    regOddValida=true;
+  } else if(v<1.30){
+    badge.className='odd-badge invalid'; badge.textContent='↓ Abaixo de 1.30';
+    hint.textContent='Abaixo de 1.30 não compensa — risco x retorno desfavorável.'; hint.style.color='var(--red)';
+    regOddValida=false;
+  } else {
+    badge.className='odd-badge warn'; badge.textContent='↑ Acima de 1.50';
+    hint.textContent='Acima de 1.50 o risco aumenta. O método não recomenda.'; hint.style.color='#ffa726';
+    regOddValida=false;
+  }
+  checarReg();
+}
+
+function checarDobrar() { checarReg(); }
+
+function checarReg() {
+  const evento=document.getElementById('reg-evento').value.trim();
+  const valor=parseFloat(document.getElementById('reg-valor').value);
+  const alertas=document.getElementById('reg-alertas');
+  let html='';
+  if(regAoVivo) html+=`<div class="alerta danger"><span class="alerta-icon">🚫</span><div><strong>Ao vivo bloqueado.</strong> PROIBIDO ABSOLUTO pelo método — sem exceção.</div></div>`;
+  if(!regOddValida&&document.getElementById('reg-odd').value!=='') html+=`<div class="alerta danger"><span class="alerta-icon">⚠️</span><div><strong>Odd fora da faixa.</strong> Use entre 1.30 e 1.50.</div></div>`;
+  if(bancaAnterior>0&&valor>bancaAnterior+0.01) html+=`<div class="alerta warn"><span class="alerta-icon">⚠️</span><div><strong>Atenção: valor maior que a aposta anterior.</strong> O método proíbe dobrar após red. Revise o valor.</div></div>`;
+  if(!html&&evento&&regOddValida&&!regAoVivo) html=`<div class="alerta info"><span class="alerta-icon">✅</span><div>Tudo certo — pronto para confirmar.</div></div>`;
+  alertas.innerHTML=html;
+  const ok=evento&&regOddValida&&!regAoVivo&&valor>0;
+  const btn=document.getElementById('reg-btn-confirmar');
+  btn.disabled=!ok; btn.style.opacity=ok?'1':'0.4'; btn.style.cursor=ok?'pointer':'not-allowed';
+}
+
+function abrirModalResultado() {
+  const evento=document.getElementById('reg-evento').value.trim();
+  const odd=parseFloat(document.getElementById('reg-odd').value);
+  const valor=parseFloat(document.getElementById('reg-valor').value);
+  entradaTemp={ esporte:regSport, evento, tags:[...tagsAtuais], odd, valor };
+  document.getElementById('mod-evento').textContent=evento;
+  document.getElementById('mod-detalhe').textContent=`Odd ${odd.toFixed(2)} — ${fmtR(valor)} · ${tagsAtuais.join(' · ')||'sem tags'}`;
+  document.getElementById('modal-resultado').classList.add('show');
+}
+
+function marcarResultado(tipo) {
+  fecharModal('modal-resultado');
+  const e=entradaTemp;
+  const lucro=tipo==='green'?parseFloat((e.valor*(e.odd-1)).toFixed(2)):-e.valor;
+  estado.entradas.push({ id:Date.now(), data:hoje(), ciclo:estado.cicloNum, faseIdx:estado.faseIdx, esporte:e.esporte, evento:e.evento, tags:e.tags, odd:e.odd, valor:e.valor, resultado:tipo, lucro });
+  estado.banca=parseFloat((estado.banca+lucro).toFixed(2));
+  if(estado.banca<0) estado.banca=0;
+  salvarEstado();
+  if(tipo==='green') showToast('✅ Green! +'+fmtR(lucro)+' — Banca: '+fmtR(estado.banca),'success');
+  else               showToast('❌ Red. Banca: '+fmtR(estado.banca)+' — mantém '+FASES[estado.faseIdx].nome,'error');
+  irTela('tela-dashboard');
+}
+
+// ══════════════════════════════════════════
+// SACAR
+// ══════════════════════════════════════════
+function abrirSacar() {
+  const fase=FASES[estado.faseIdx];
+  document.getElementById('mod-sacar-titulo').textContent='🎉 '+fase.nome+' concluída!';
+  const prox=FASES[Math.min(estado.faseIdx+1,FASES.length-1)];
+  document.getElementById('mod-sacar-sub').textContent=`Saque ${fmtR(fase.lucro)} de lucro. Próxima fase: ${prox.nome} com banca ${fmtR(prox.banca)}.`;
+  document.getElementById('modal-sacar').classList.add('show');
+}
+function confirmarSaque() {
+  fecharModal('modal-sacar');
+  const fase=FASES[estado.faseIdx];
+  estado.totalSacado=parseFloat((estado.totalSacado+fase.lucro).toFixed(2));
+  if(estado.faseIdx<FASES.length-1) estado.faseIdx++;
+  estado.cicloNum++;
+  estado.banca=FASES[estado.faseIdx].banca;
+  salvarEstado();
+  showToast('💰 Sacado! Avançando para '+FASES[estado.faseIdx].nome,'success');
+  renderDashboard();
+}
+
+// ══════════════════════════════════════════
+// ESCADA
+// ══════════════════════════════════════════
+function renderEscada() {
+  const concl=estado.faseIdx;
+  document.getElementById('esc-fase-nome').textContent=FASES[estado.faseIdx].nome;
+  document.getElementById('esc-concluidas').textContent=concl+'/11';
+  document.getElementById('esc-sacado').textContent=fmtR(estado.totalSacado);
+  let html='';
+  FASES.forEach((f,i)=>{
+    const status=i<concl?'concluido':i===concl?'atual':'futuro';
+    const c=status==='concluido'?'c':status==='atual'?'a':'f';
+    const ico=status==='concluido'?'✅':status==='atual'?'📍':'🔒';
+    const open=estado.degrausExpandidos[f.id];
+    html+=`<div class="degrau ${status}" onclick="toggleDegrau('${f.id}')">
+      <div class="degrau-top">
+        <div class="degrau-icon ${c}">${ico}</div>
+        <div style="flex:1"><div class="degrau-nome ${c}">${f.nome}</div></div>
+        <div class="degrau-lucro ${c}">+R$ ${f.lucro}</div>
+      </div>
+      <div class="degrau-sub">R$ ${f.banca} → ${f.mult} → Meta R$ ${f.meta}</div>
+      <div class="degrau-det${open?' open':''}">
+        <div class="det-inner">
+          <div><div class="det-label">Banca ini.</div><div class="det-val">R$ ${f.banca}</div></div>
+          <div><div class="det-label">Meta</div><div class="det-val">R$ ${f.meta}</div></div>
+          <div><div class="det-label">Lucro</div><div class="det-val" style="color:${c==='c'?'var(--success)':c==='a'?'var(--gold)':'var(--muted)'}">R$ ${f.lucro}</div></div>
+          <div><div class="det-label">Múltiplo</div><div class="det-val">${f.mult}</div></div>
+          <div><div class="det-label">Status</div><div class="det-val" style="font-size:11px">${status==='concluido'?'Concluído ✓':status==='atual'?'Em curso →':'Bloqueado'}</div></div>
+          <div><div class="det-label">Fase</div><div class="det-val" style="font-size:11px">${i+1}/11</div></div>
+        </div>
+      </div>
+    </div>${i<FASES.length-1?'<div class="connector"><div class="connector-line"></div></div>':''}`;
+  });
+  document.getElementById('escada-lista').innerHTML=html;
+}
+function toggleDegrau(id){ estado.degrausExpandidos[id]=!estado.degrausExpandidos[id]; salvarEstado(); renderEscada(); }
+
+// ══════════════════════════════════════════
+// HISTÓRICO
+// ══════════════════════════════════════════
+let histFiltro='todos';
+function filtrarHist(el,tipo){ document.querySelectorAll('.filtro').forEach(f=>f.classList.remove('ativo')); el.classList.add('ativo'); histFiltro=tipo; renderHistorico(); }
+
+function renderHistorico() {
+  const todas=[...estado.entradas].reverse();
+  const greens=todas.filter(e=>e.resultado==='green').length;
+  const reds=todas.filter(e=>e.resultado==='red').length;
+  const total=todas.length;
+  const taxa=total>0?Math.round((greens/total)*100):0;
+  const oddMedia=total>0?(todas.reduce((a,e)=>a+e.odd,0)/total).toFixed(2):'—';
+  const dias=[...new Set(todas.map(e=>e.data))].length;
+  document.getElementById('hist-taxa').textContent=total>0?taxa+'%':'—';
+  document.getElementById('hist-taxa-sub').textContent=total>0?greens+'G / '+reds+'R em '+total+' ent.':'sem entradas';
+  document.getElementById('hist-sacado').textContent=fmtR(estado.totalSacado);
+  document.getElementById('hist-ciclos-sub').textContent=(estado.cicloNum-1)+' ciclos concluídos';
+  document.getElementById('hist-odd-media').textContent=oddMedia;
+  document.getElementById('hist-total').textContent=total;
+  document.getElementById('hist-dias-sub').textContent=dias+' dias ativos';
+  let filtradas=todas;
+  if(histFiltro==='green')   filtradas=todas.filter(e=>e.resultado==='green');
+  if(histFiltro==='red')     filtradas=todas.filter(e=>e.resultado==='red');
+  if(histFiltro==='futebol') filtradas=todas.filter(e=>e.esporte==='futebol');
+  if(histFiltro==='tenis')   filtradas=todas.filter(e=>e.esporte==='tenis');
+  if(histFiltro==='outros')  filtradas=todas.filter(e=>e.esporte==='outros');
+  const lista=document.getElementById('hist-lista');
+  if(!filtradas.length){ lista.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-txt">Nenhuma entrada${histFiltro!=='todos'?' com esse filtro':' ainda'}.</div></div>`; return; }
+  let html=''; let ultimoCiclo=-1;
+  filtradas.forEach(e=>{
+    if(e.ciclo!==ultimoCiclo){ ultimoCiclo=e.ciclo; const fn=FASES[e.faseIdx]?FASES[e.faseIdx].nome:'—'; html+=`<div class="ciclo-sep"><div class="ciclo-sep-line"></div><span class="ciclo-sep-label">Ciclo ${e.ciclo} — ${fn}</span><div class="ciclo-sep-line"></div></div>`; }
+    html+=entradaRowHtml(e);
+  });
+  lista.innerHTML=html;
+}
+
+// ══════════════════════════════════════════
+// RELATÓRIO POR TAG
+// ══════════════════════════════════════════
+function renderRelatorio() {
+  const lista=document.getElementById('rel-lista');
+  const todasTags=getTagsUsadas();
+  if(!todasTags.length){
+    lista.innerHTML=`<div class="empty-state"><div class="empty-icon">🏷️</div><div class="empty-txt">Nenhuma tag registrada ainda.<br>Adicione tags ao registrar entradas.</div></div>`;
+    return;
+  }
+  const stats=todasTags.map(tag=>{
+    const ents=estado.entradas.filter(e=>e.tags&&e.tags.includes(tag));
+    const g=ents.filter(e=>e.resultado==='green').length;
+    const r=ents.filter(e=>e.resultado==='red').length;
+    const total=ents.length;
+    const taxa=total>0?Math.round((g/total)*100):0;
+    const lucro=ents.reduce((a,e)=>a+e.lucro,0);
+    return { tag, total, g, r, taxa, lucro };
+  }).sort((a,b)=>b.total-a.total);
+
+  lista.innerHTML=stats.map(s=>`
+    <div class="rel-tag-card">
+      <div class="rel-tag-header">
+        <span class="rel-tag-nome">🏷️ ${s.tag}</span>
+        <span class="rel-tag-total">${s.total} entrada${s.total!==1?'s':''}</span>
+      </div>
+      <div class="rel-tag-stats">
+        <div><div class="rel-tag-stat-label">Taxa</div><div class="rel-tag-stat-val" style="color:${s.taxa>=60?'var(--success)':s.taxa>=40?'var(--gold)':'var(--red)'}">${s.taxa}%</div></div>
+        <div><div class="rel-tag-stat-label">Greens</div><div class="rel-tag-stat-val" style="color:var(--success)">${s.g}</div></div>
+        <div><div class="rel-tag-stat-label">Reds</div><div class="rel-tag-stat-val" style="color:var(--red)">${s.r}</div></div>
+        <div><div class="rel-tag-stat-label">Lucro</div><div class="rel-tag-stat-val" style="color:${s.lucro>=0?'var(--success)':'var(--red)'}">${s.lucro>=0?'+':''}${fmtR(s.lucro)}</div></div>
+      </div>
+      <div class="rel-tag-bar"><div class="rel-tag-bar-fill" style="width:${s.taxa}%;background:${s.taxa>=60?'var(--success)':s.taxa>=40?'var(--gold)':'var(--red)'}"></div></div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function fecharModal(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.overlay').forEach(o=>{ o.addEventListener('click',function(e){ if(e.target===this) this.classList.remove('show'); }); });
+function confirmarReset(){ if(confirm('Tem certeza? Apaga TODOS os dados. Ação irreversível.')){ estado=estadoPadrao(); salvarEstado(); irTela('tela-dashboard'); showToast('Dados zerados. Novo começo! 🚀','info'); } }
+
+// INIT
+renderDashboard();
+</script>
+</body>
+</html>
